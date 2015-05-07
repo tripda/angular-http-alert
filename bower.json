@@ -1,6 +1,6 @@
 {
   "name": "angular-http-alert",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "authors": [
     "Dhuan <dhuanco@gmail.com>"
   ],
@@ -10,7 +10,9 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "sample",
+    "gulpfile.js"
   ],
   "dependencies": {
     "angular": "~1.3.15",
