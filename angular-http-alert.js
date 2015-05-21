@@ -10,6 +10,7 @@
         var responseParser = function(response) {
             return 'An error ocurred. Http Response Body: ' + JSON.stringify(response.data);
         };
+        var useTranslate = false;
 
         alerter.error = function(message) {growlObj.error(message);};
 
@@ -22,7 +23,10 @@
         this.getResponseParser = function() {return responseParser;};
         this.setResponseParser = function(newResponseParser) {responseParser = newResponseParser;};
 
-        this.$get = ['growl', function(growl) {
+        this.setUseTranslate = function(newUseTranslate) { useTranslate = newUseTranslate; };
+
+
+        this.$get = ['growl', '$filter', function(growl, $filter) {
             growlObj = growl;
             var service = {};
 
@@ -33,6 +37,10 @@
                     return config;
                 }
 
+                if (useTranslate) {
+                    message = $filter('translate')(message);
+                }
+
                 alerter.error(message);
 
                 return config;
@@ -40,8 +48,5 @@
 
             return service;
         }];
-    }
-
-    function httpAlerter() {
     }
 })();

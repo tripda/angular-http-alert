@@ -1,10 +1,11 @@
 describe('http-alert', function() {
-    var interceptor, interceptorProvider, alerter, responseParser, filter;
+    var interceptor, interceptorProvider, alerter, responseParser, filter, ngFilter;
 
     beforeEach(function() {
         module('http-alert');
 
-        module(function(httpAlertInterceptorProvider) {
+        module(function(httpAlertInterceptorProvider, $provide) {
+            interceptorProvider = httpAlertInterceptorProvider;
             alerter = {};
             alerter.error = jasmine.createSpy();
 
@@ -17,10 +18,15 @@ describe('http-alert', function() {
             httpAlertInterceptorProvider.setAlerter(alerter);
             httpAlertInterceptorProvider.setResponseParser(responseParser);
             httpAlertInterceptorProvider.setFilter(filter);
+
+            $provide.service('$filter', function () {
+                return jasmine.createSpy('$filter').and.returnValue(jasmine.createSpy('$filter.func'));
+            });
         });
 
-        inject(function(httpAlertInterceptor) {
+        inject(function(httpAlertInterceptor, $filter) {
             interceptor = httpAlertInterceptor;
+            ngFilter = $filter;
         });
     });
 
@@ -38,5 +44,16 @@ describe('http-alert', function() {
         var configMock = {data: 'error!!'};
 
         expect(alerter.error).not.toHaveBeenCalledWith();
+    });
+
+    it('should set translation parser', function() {
+        var configMock = {data: 'foobar'};
+
+        interceptorProvider.setUseTranslate(true);
+
+        console.log(ngFilter)
+        interceptor.responseError(configMock);
+
+        expect(ngFilter).toHaveBeenCalledWith('translate');
     });
 });
