@@ -26,13 +26,13 @@
         this.setUseTranslate = function(newUseTranslate) { useTranslate = newUseTranslate; };
 
 
-        this.$get = ['growl', '$filter', function(growl, $filter) {
+        this.$get = ['growl', '$filter', '$q', function(growl, $filter, $q) {
             growlObj = growl;
             var service = {};
 
             service.responseError = function(config) {
                 if(!filter(config)) {
-                    return config;
+                    return $q.reject(config);
                 }
 
                 var message = responseParser(config);
@@ -43,7 +43,7 @@
 
                 alerter.error(message);
 
-                return config;
+                return $q.reject(config);
             }
 
             return service;

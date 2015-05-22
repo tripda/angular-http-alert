@@ -1,5 +1,5 @@
 describe('http-alert', function() {
-    var interceptor, interceptorProvider, alerter, responseParser, filter, ngFilter;
+    var interceptor, interceptorProvider, alerter, responseParser, filter, ngFilter, q, rejectReturnValue;
 
     beforeEach(function() {
         module('http-alert');
@@ -22,22 +22,32 @@ describe('http-alert', function() {
             $provide.service('$filter', function () {
                 return jasmine.createSpy('$filter').and.returnValue(jasmine.createSpy('$filter.func'));
             });
+
+            $provide.service('$q', function () {
+                rejectReturnValue = true;
+                this.reject = jasmine.createSpy('$q.reject').and.returnValue(rejectReturnValue);
+            });
         });
 
-        inject(function(httpAlertInterceptor, $filter) {
+        inject(function(httpAlertInterceptor, $filter, $q) {
             interceptor = httpAlertInterceptor;
             ngFilter = $filter;
+            q = $q;
         });
     });
 
     it('should have a response error handler', function() {
         var configMock = {data: 'foobar'};
 
-        expect(interceptor.responseError(configMock)).toBe(configMock);
+        var result = interceptor.responseError(configMock);
 
         expect(responseParser).toHaveBeenCalled();
 
         expect(alerter.error).toHaveBeenCalledWith("Error!");
+
+        expect(q.reject).toHaveBeenCalledWith(configMock);
+
+        expect(result).toBe(rejectReturnValue);
     });
 
     it('should not alert error when filter returns false', function() {
