@@ -31,11 +31,11 @@
             var service = {};
 
             service.responseError = function(config) {
-                var message = responseParser(config);
-
                 if(!filter(config)) {
                     return config;
                 }
+
+                var message = responseParser(config);
 
                 if (useTranslate) {
                     message = $filter('translate')(message);
