@@ -61,7 +61,6 @@ describe('http-alert', function() {
 
         interceptorProvider.setUseTranslate(true);
 
-        console.log(ngFilter)
         interceptor.responseError(configMock);
 
         expect(ngFilter).toHaveBeenCalledWith('translate');
